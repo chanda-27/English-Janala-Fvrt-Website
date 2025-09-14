@@ -4,12 +4,64 @@ const loadData = () => {
     .then((previous) => displayLesson(previous.data));
 };
 
+const removeActive = () => {
+  const lessonBtns = document.querySelectorAll(".lesson-btn");
+  lessonBtns.forEach((btn) => btn.classList.remove("active"));
+};
+
 const loadLevelWord = (id) => {
   const url = `https://openapi.programming-hero.com/api/level/${id}`;
 
   fetch(url)
     .then((res) => res.json())
-    .then((update) => displayLearn(update.data));
+    .then((update) => {
+      removeActive();
+      const clickBtn = document.getElementById(`lesson-btn-${id}`);
+
+      clickBtn.classList.add("active");
+
+      displayLearn(update.data);
+    });
+};
+
+const loadWordDetail = async (id) => {
+  const url = `https://openapi.programming-hero.com/api/word/${id}`;
+  const res = await fetch(url);
+  const details = await res.json();
+  displayWordDetails(details.data);
+};
+
+const displayWordDetails = (word) => {
+  const detailsBox = document.getElementById("details-container");
+  detailsBox.innerHTML = `<div class="border-2 rounded-sm border-[#EDF7FF] p-4 space-y-6">
+              <div class="">
+                <h2 class="text-2xl font-bold">
+                  ${word.word} (<i class="fa-solid fa-microphone-lines"></i> :${word.pronunciation})
+                </h2>
+              </div>
+              <div class="">
+                <h2 class="font-bold">Meaning</h2>
+                <p class="mt-2">${word.meaning}</p>
+              </div>
+              <div class="">
+                <h2 class="font-bold">Example</h2>
+                <p class="mt-1">${word.sentence}</p>
+              </div>
+              <div class="">
+                <h2 class="font-bold mb-4">সমার্থক শব্দ গুলো</h2>
+                <span class="">
+                  <button class="btn bg-[#EDF7FF] mr-2">Enthusiastic</button>
+                  <button class="btn bg-[#EDF7FF] mr-2">excited</button>
+                  <button class="btn bg-[#EDF7FF]">keen</button>
+                </span>
+              </div>
+            </div>
+            <div class="mt-8">
+              <button class="btn btn-primary text-xl">Complete Learning</button>
+            </div>
+
+            `;
+  document.getElementById("word_modal").showModal();
 };
 
 const displayLearn = (words) => {
@@ -45,7 +97,9 @@ const displayLearn = (words) => {
       word.pronunciation ? word.pronunciation : "pronunciation পাওয়া যাইনি "
     }</h2>
           <div class="flex justify-between items-center mt-10">
-            <button class="btn bg-purple-300 hover:bg-blue-600">
+            <button onclick="loadWordDetail(${
+              word.id
+            })" class="btn bg-purple-300 hover:bg-blue-600">
               <i class="fa-solid fa-circle-info"></i>
             </button>
             <button class="btn bg-purple-300 hover:bg-blue-600">
@@ -62,11 +116,9 @@ const displayLesson = (lessons) => {
   const mainContainer = document.getElementById("div-container");
   mainContainer.innerHTML = "";
   for (let lesson of lessons) {
-    console.log(lesson);
-
     const makeDiv = document.createElement("div");
     makeDiv.innerHTML = `
-            <button onclick="loadLevelWord(${lesson.level_no})" class="border border-[#422AD5] text-[#422ad5] font-semibold px-4 py-1 rounded-sm">
+            <button id="lesson-btn-${lesson.level_no}" onclick="loadLevelWord(${lesson.level_no})" class="border border-[#422AD5] text-[#422ad5] font-semibold px-4 py-1 rounded-sm lesson-btn">
                   <i class="fa-solid fa-book-open mr-1"></i>Lesson - ${lesson.level_no}
             </button>
                 
