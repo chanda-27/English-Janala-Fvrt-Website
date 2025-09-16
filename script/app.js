@@ -1,3 +1,8 @@
+const createElements = (arr) => {
+  const htmlElements = arr.map((el) => `<span class="btn ">${el}</span>`);
+  return htmlElements.join(" ");
+};
+
 const loadData = () => {
   fetch("https://openapi.programming-hero.com/api/levels/all")
     .then((res) => res.json())
@@ -36,7 +41,9 @@ const displayWordDetails = (word) => {
   detailsBox.innerHTML = `<div class="border-2 rounded-sm border-[#EDF7FF] p-4 space-y-6">
               <div class="">
                 <h2 class="text-2xl font-bold">
-                  ${word.word} (<i class="fa-solid fa-microphone-lines"></i> :${word.pronunciation})
+                  ${word.word} (<i class="fa-solid fa-microphone-lines"></i> :${
+    word.pronunciation
+  })
                 </h2>
               </div>
               <div class="">
@@ -49,11 +56,7 @@ const displayWordDetails = (word) => {
               </div>
               <div class="">
                 <h2 class="font-bold mb-4">সমার্থক শব্দ গুলো</h2>
-                <span class="">
-                  <button class="btn bg-[#EDF7FF] mr-2">Enthusiastic</button>
-                  <button class="btn bg-[#EDF7FF] mr-2">excited</button>
-                  <button class="btn bg-[#EDF7FF]">keen</button>
-                </span>
+                <div class="">${createElements(word.synonyms)}</div>
               </div>
             </div>
             <div class="mt-8">
